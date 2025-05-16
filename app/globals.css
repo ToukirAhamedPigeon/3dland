@@ -120,3 +120,18 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .accordion-trigger-custom {
+    /* Gradient in light mode */
+    @apply cursor-pointer px-4 py-4 mb-2 bg-gradient-to-r
+            from-gray-100 via-gray-200 to-gray-300
+            text-base
+            transition;
+
+    /* Override the same class for dark mode */
+    @apply dark:from-blue-900 dark:via-blue-800 dark:to-blue-700
+            dark:text-gray-50;
+  }
+}
+
