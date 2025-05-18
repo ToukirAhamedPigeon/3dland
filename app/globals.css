@@ -152,7 +152,7 @@
     @apply flex items-center justify-center
   }
 
-  .scrim-max-width {
+  .screen-max-width {
     margin-inline-start: auto;
     margin-inline-end: auto;
     position: relative;
