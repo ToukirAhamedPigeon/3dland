@@ -24,7 +24,7 @@ const GsapText = () => {
   return (
     <main>
 
-      <h1 id="text" className='opacity-0 translate-y-10 text-2xl text-bold'>Gsap Text</h1>
+      <h1 id="text" className='opacity-0 translate-y-10 text-2xl text-bold text-blue-500'>Gsap Text</h1>
 
       <p className="mt-5 text-gray-500 para">
         We can use same method like <code>gsap.to()</code>,{" "}
