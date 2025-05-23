@@ -48,15 +48,17 @@ const VideoCarousel = () => { // Initialize Component
    // Play the current video when videoId and loaded data change
     useEffect(() => {   
         // console.log('useEffect Play Current Video');   
-        const videoEl = videoRef.current[videoId]; //set video element from video Reference Array
-        if (videoEl) { // if videoEL Exists
-            videoEl.currentTime = 0; // Reset to start by defining currentTime of video element to 0.
-            // videoEl.play().catch(e => console.error("Auto-play failed:", e)); // Play the video element
-            setVideo(prev => ({
-                ...prev, // copy all previous video properties
-                isPlaying: true, // set the video playing is true
-                startPlay: true // set the video start true 
-            })); // Set current video data to video state variable 
+        if(videoId>0){
+            const videoEl = videoRef.current[videoId]; //set video element from video Reference Array
+            if (videoEl) { // if videoEL Exists
+                videoEl.currentTime = 0; // Reset to start by defining currentTime of video element to 0.
+                // videoEl.play().catch(e => console.error("Auto-play failed:", e)); // Play the video element
+                setVideo(prev => ({
+                    ...prev, // copy all previous video properties
+                    isPlaying: true, // set the video playing is true
+                    startPlay: true // set the video start true 
+                })); // Set current video data to video state variable 
+            }
         }
     }, [videoId, loadedData]); // Play the current video when videoId and loaded data change
 
@@ -66,6 +68,14 @@ const VideoCarousel = () => { // Initialize Component
         if (scrollTriggerRef.current) {
             scrollTriggerRef.current.kill();
         }
+        gsap.to('#slider',{
+            transform: `translateX(${-100 * videoId}%)`,
+            duration:2,
+            ease:'power2.inOut'
+        })
+         // only create one ScrollTrigger – the one that matches the current slide
+
+    // make sure it is paused when we arrive at the slide for the first time
           videoRef.current.forEach((video, i) => { //for each elements in video reference Array configure useGSAP Animation with a loop
             if (!video) return; // if state variable video is not null 
             if (video===videoRef.current[videoId]){ // if videoRef video of videoId and video state variable current video is same
@@ -73,10 +83,17 @@ const VideoCarousel = () => { // Initialize Component
                 trigger: video, // Animation will play when scrollbar reach to the video reference in jsx
                 start: 'top 60%',       // Start animation after inter 60% of reference
                 end: 'bottom 40%',     // End animation after passing bottom 40% of the reference
-                onEnter:  () => video.play(), // when scrollbar enter into the trigger point for first time video should start playing
+                onEnter:  () =>{
+                    setVideo(prev => ({
+                        ...prev, // copy all previous video properties
+                        isPlaying: true, // set the video playing is true
+                        startPlay: true // set the video start true 
+                    }));
+                    safePlay(video);
+                } , // when scrollbar enter into the trigger point for first time video should start playing
                 onEnterBack: () => {
                     if (video.paused) {
-                        video.play();
+                        safePlay(video);
                     }
                 }, // when scrollbar enter into the trigger point again video should start playing again
                 onLeave:  () => video.pause(),  // when scrollbar leave the trigger point first time video should pause
@@ -87,16 +104,27 @@ const VideoCarousel = () => { // Initialize Component
         },
         { scope, dependencies: [videoId] } // ➜ selectors & triggers stay inside this subtree, animation will happen if videoId changes. videoId is a destructured property from video state variable
       );
+      function safePlay(video: HTMLVideoElement) {
+        const p = video.play();
+        if (p !== undefined) {
+          p.catch(err => {
+            if (err.name !== 'AbortError' && err.name !== 'NotAllowedError') {
+              console.error(err);
+            }
+          });
+        }
+      }
+      
       // Perform video pause or play when the destructured properties of video state variable like startPaly, videoId, isPlaying or state variable video meta loaded data changes
     useEffect(() => {
-        // console.log('useEffect Perform Play Pause');   
+        //console.log('useEffect Perform Play Pause');   
         const videoEl = videoRef.current[videoId]; // defining video element from video reference array from jsx
-        if(videoEl && loadedData.length>3){ // if video element exist
+        if(videoEl){ // if video element exist
             if(!isPlaying){ // if property isPlaying of video state variable changed and set to false 
                 videoEl.pause(); // then video should pause
             }
             else{ // if property isPlaying of video state variable changed and set to true 
-                startPlay && videoEl.play(); // then if startPlay is also true then video should play
+                startPlay && safePlay(videoEl); // then if startPlay is also true then video should play
             }
         }
     }, [startPlay, videoId, isPlaying, loadedData]) // Perform video pause or play when the destructured properties of video state variable like startPaly, videoId, isPlaying or state variable video meta loaded data changes
@@ -123,7 +151,7 @@ const VideoCarousel = () => { // Initialize Component
     
     //handle animations of video indicators under the video if destructured videoId or startPlay properties of video state variable change 
     useEffect(() => {
-        // console.log('useEffect progressbar');  
+        //console.log('useEffect progressbar');  
         let currentProgress = 0; //define currentProgress of video with default value 0
         let span = videoSpanRef.current; // assign span the current video indicator
         if(span[videoId]){ // if span of current video indicator exists
@@ -145,6 +173,7 @@ const VideoCarousel = () => { // Initialize Component
                     }
                 },
                 onComplete: () => { // on Complete the tween animation set the video indicator state
+                    //console.log(isPlaying)
                     if(isPlaying){ //if Carousol isPlaying  
                         gsap.to(videoDivRef.current[videoId],{ // animate and shrink the progress bar container div size to 12 px 
                             width: '12px'
