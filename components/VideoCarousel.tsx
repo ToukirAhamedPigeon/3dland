@@ -240,6 +240,7 @@ const VideoCarousel = () => { // Initialize Component
                                 playsInline={true}
                                 preload='auto'
                                 muted
+                                className={`${list.id === 2 && 'translate-x-44'} pointer-events-none`}
                                 key={list.video}
                                 ref={(el) => {videoRef.current[i] = el}}
                                 onPlay={()=>{
