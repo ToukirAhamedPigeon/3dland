@@ -1,11 +1,15 @@
 'use client'
-import React, { use, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useGSAP } from '@gsap/react'
 import ScrollTrigger from 'gsap/dist/ScrollTrigger'
 import gsap from 'gsap'
 import ModelView from './ModelView'
 import { yellowImg } from '@/utils'
 import * as THREE from 'three'
+import { Canvas } from '@react-three/fiber'
+import { View } from '@react-three/drei'
+import { models, sizes } from '@/constants'
+import { cn } from '@/lib/utils'
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -63,6 +67,52 @@ const Model = () => {
               item={model}
               size={size}
             />
+            <Canvas
+              className="w-full h-full"
+              style={{ 
+                position: 'fixed',
+                top: 0,
+                bottom: 0, 
+                left: 0,
+                right: 0, 
+                overflow: 'hidden'
+               }}
+               eventSource={
+                typeof window !== 'undefined'
+                  ? document.getElementById('root') ?? undefined
+                  : undefined
+              }
+            >
+              <View.Port />
+            </Canvas>
+          </div>
+          <div className="mx-auto w-full">
+            <p className="text-sm font-light text-center mb-5">{model.title}</p>
+            <div className="flex-center">
+              <ul className="color-container">
+                {models.map((item,i)=>(
+                  <li key={i}
+                   className="w-6 h-6 rounded-full mx-2 cursor-pointer" 
+                  style={{ 
+                    backgroundColor: item.color[0]
+                   }}
+                   onClick={() => setModel(item)} />
+                  ))}
+              </ul>
+              <div className="size-btn-container">
+                  {sizes.map(({label,value})=>(
+                    <button
+                    key={label}
+                    onClick={() => setSize(value)}
+                    className={cn('size-btn cursor-pointer px-4 py-2 rounded-full',
+                      size === value ? 'bg-white text-black' : 'bg-transparent text-white'
+                    )}
+                  >
+                    {label}
+                  </button>
+                  ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
