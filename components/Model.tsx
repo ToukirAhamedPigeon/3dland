@@ -10,6 +10,7 @@ import { Canvas } from '@react-three/fiber'
 import { View } from '@react-three/drei'
 import { models, sizes } from '@/constants'
 import { cn } from '@/lib/utils'
+import { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -21,8 +22,8 @@ const Model = () => {
     img: yellowImg
   });
   //camera control for the model view
-  const cameraControlSmall = useRef<HTMLElement | null>(null);
-  const cameraControlLarge = useRef<HTMLElement | null>(null);
+  const cameraControlSmall = useRef<OrbitControlsImpl | null>(null);
+  const cameraControlLarge = useRef<OrbitControlsImpl | null>(null);
 
   //model
   const small = useRef(new THREE.Group());
@@ -42,7 +43,7 @@ const Model = () => {
   });
 
   return (
-    <section>
+    <section className='px-4'>
       <div className="screen-max-width mt-30">
         <h1 id="heading" className="section-heading text-gray-100 lg:text-6xl md:text-5xl text-3xl lg:mb-0 mb-5 font-medium">
           Take a closer look.
