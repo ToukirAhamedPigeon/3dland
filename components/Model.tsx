@@ -1,46 +1,52 @@
 'use client'
 import React, { useRef, useState } from 'react'
-import { useGSAP } from '@gsap/react'
-import ScrollTrigger from 'gsap/dist/ScrollTrigger'
 import gsap from 'gsap'
-import ModelView from './ModelView'
-import { yellowImg } from '@/utils'
-import * as THREE from 'three'
+import ScrollTrigger from 'gsap/dist/ScrollTrigger'
+import { useGSAP } from '@gsap/react'
 import { Canvas } from '@react-three/fiber'
 import { View } from '@react-three/drei'
+import * as THREE from 'three'
+import ModelView from './ModelView'
 import { models, sizes } from '@/constants'
 import { cn } from '@/lib/utils'
 import { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
+import { yellowImg } from '@/utils'
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger)
 
 const Model = () => {
-  const [size, setSize] = useState('small');
+  const [size, setSize] = useState('small')
   const [model, setModel] = useState({
-    title:'iPhone 15 Pro in Natural Titanium',
-    color: ['#8F8A81','#FFE7B9','#6F6C64'],
+    title: 'iPhone 15 Pro in Natural Titanium',
+    color: ['#8F8A81', '#FFE7B9', '#6F6C64'],
     img: yellowImg
-  });
-  //camera control for the model view
-  const cameraControlSmall = useRef<OrbitControlsImpl | null>(null);
-  const cameraControlLarge = useRef<OrbitControlsImpl | null>(null);
+  })
 
-  //model
-  const small = useRef(new THREE.Group());
-  const large = useRef(new THREE.Group());
+  // Refs for orbit controls and group objects
+  const cameraControlSmall = useRef<OrbitControlsImpl | null>(null)
+  const cameraControlLarge = useRef<OrbitControlsImpl | null>(null)
+  const small = useRef(new THREE.Group())
+  const large = useRef(new THREE.Group())
 
-  //rotation
-  const [smallRotation, setSmallRotation] = useState(0);
-  const [largeRotation, setLargeRotation] = useState(0);
+  // Rotation states
+  const [smallRotation, setSmallRotation] = useState(0)
+  const [largeRotation, setLargeRotation] = useState(0)
+
+  // Viewport tracking refs
+  const wrapperRef = useRef<HTMLElement>(null);   // div that wraps everything
+  const smallTrack  = useRef<HTMLDivElement>(null)   // track for View #1
+  const largeTrack  = useRef<HTMLDivElement>(null)   // track for View #2
+
+  // GSAP animation
   useGSAP(() => {
     gsap.to('#heading', {
-      scrollTrigger:{
-        trigger:'#heading'
-      }, 
+      scrollTrigger: {
+        trigger: '#heading'
+      },
       y: 0,
       opacity: 1
-    });
-  });
+    })
+  })
 
   return (
     <section className='px-4'>
@@ -49,69 +55,72 @@ const Model = () => {
           Take a closer look.
         </h1>
         <div className="flex flex-col items-center mt-5">
-          <div className='w-full h-[75vh] md:h-[90vh] overflow-hidden relative'>
-            <ModelView 
+          {/* Scene wrapper and tracking divs */}
+          <div ref={wrapperRef as React.Ref<HTMLDivElement>} className='w-full h-[75vh] md:h-[90vh] overflow-hidden relative'>
+
+            <div ref={smallTrack} className="absolute inset-0" />
+            <div ref={largeTrack} className="absolute inset-0 right-[-100%]" />
+
+            <ModelView
               index={1}
               groupRef={small}
-              gsapType="view1"
               controlRef={cameraControlSmall}
+              gsapType="view1"
               setRotationState={setSmallRotation}
               item={model}
               size={size}
+              track={smallTrack  as React.RefObject<HTMLElement>}
             />
-            <ModelView 
+            <ModelView
               index={2}
               groupRef={large}
-              gsapType="view2"
               controlRef={cameraControlLarge}
+              gsapType="view2"
               setRotationState={setLargeRotation}
               item={model}
               size={size}
+              track={largeTrack  as React.RefObject<HTMLElement>}
             />
+
             <Canvas
               className="w-full h-full pointer-events-none"
-              style={{ 
+              style={{
                 position: 'fixed',
-                top: 0,
-                bottom: 0, 
-                left: 0,
-                right: 0, 
+                inset: 0,
                 overflow: 'hidden'
-               }}
-               eventSource={
-                typeof window !== 'undefined'
-                  ? document.getElementById('root') ?? undefined
-                  : undefined
-              }
+              }}
+              eventSource={wrapperRef as React.RefObject<HTMLElement>}
             >
               <View.Port />
             </Canvas>
           </div>
+
           <div className="mx-auto w-full">
             <p className="text-sm font-light text-center mb-5">{model.title}</p>
             <div className="flex-center">
               <ul className="color-container">
-                {models.map((item,i)=>(
-                  <li key={i}
-                   className="w-6 h-6 rounded-full mx-2 cursor-pointer" 
-                  style={{ 
-                    backgroundColor: item.color[0]
-                   }}
-                   onClick={() => setModel(item)} />
-                  ))}
+                {models.map((item, i) => (
+                  <li
+                    key={i}
+                    className="w-6 h-6 rounded-full mx-2 cursor-pointer"
+                    style={{ backgroundColor: item.color[0] }}
+                    onClick={() => setModel(item)}
+                  />
+                ))}
               </ul>
               <div className="size-btn-container">
-                  {sizes.map(({label,value})=>(
-                    <button
+                {sizes.map(({ label, value }) => (
+                  <button
                     key={label}
                     onClick={() => setSize(value)}
-                    className={cn('size-btn cursor-pointer px-4 py-2 rounded-full',
+                    className={cn(
+                      'size-btn cursor-pointer px-4 py-2 rounded-full',
                       size === value ? 'bg-white text-black' : 'bg-transparent text-white'
                     )}
                   >
                     {label}
                   </button>
-                  ))}
+                ))}
               </div>
             </div>
           </div>
