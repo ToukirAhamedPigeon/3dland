@@ -69,7 +69,7 @@ const Model = () => {
               size={size}
             />
             <Canvas
-              className="w-full h-full"
+              className="w-full h-full pointer-events-none"
               style={{ 
                 position: 'fixed',
                 top: 0,
