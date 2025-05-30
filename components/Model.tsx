@@ -1,5 +1,5 @@
 'use client'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/dist/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
@@ -11,6 +11,7 @@ import { models, sizes } from '@/constants'
 import { cn } from '@/lib/utils'
 import { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 import { yellowImg } from '@/utils'
+import { animateWithGsapTimeline } from '@/utils/animations'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -38,6 +39,22 @@ const Model = () => {
   const largeTrack  = useRef<HTMLDivElement>(null)   // track for View #2
 
   // GSAP animation
+
+  const tl = gsap.timeline();
+  useEffect(()=>{
+    if(size==='large'){
+      animateWithGsapTimeline(tl,small,smallRotation, '#view1', '#view2', {
+        transform: 'translateX(-100%)',
+        duration: 2
+      })
+    }
+    else{
+      animateWithGsapTimeline(tl,large,largeRotation, '#view2', '#view1', {
+        transform: 'translateX(0)',
+        duration: 2
+      })
+    }
+  },[size])
   useGSAP(() => {
     gsap.to('#heading', {
       scrollTrigger: {

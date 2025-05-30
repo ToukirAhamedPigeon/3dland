@@ -1,5 +1,5 @@
 'use client'
-import { Html, OrbitControls, PerspectiveCamera, View } from '@react-three/drei'
+import {OrbitControls, PerspectiveCamera, View } from '@react-three/drei'
 import React, {
   Dispatch,
   SetStateAction,
@@ -11,6 +11,7 @@ import { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 import * as THREE from 'three'
 import Lights from './Lights'
 import { Model as IPhone } from './IPhone'
+import Loader from './Loader'
 
 export interface ModelItem {
   title: string
@@ -40,13 +41,13 @@ const ModelView = ({
   track
 }: ModelViewProps) => {
   const target = useMemo(() => new THREE.Vector3(0, 0, 0), [])
-
+  console.log();
   return (
     <View
       index={index}
       id={gsapType}
       track={track} // ✅ required to enable interaction
-      className={`w-full h-full absolute inset-0 ${index === 2 ? 'right-[-100%]' : ''}`}
+      className={`w-full h-full absolute ${index === 2 ? 'right-[-100%]' : ''}`}
     >
       <ambientLight intensity={0.3} />
       <PerspectiveCamera makeDefault position={[0, 0, 4]} />
@@ -65,8 +66,8 @@ const ModelView = ({
         }}
       />
       <group ref={groupRef} name={index === 1 ? 'small' : 'large'}>
-        <Suspense fallback={<Html><div>Loading</div></Html>}>
-          <IPhone scale={index === 1 ? [15, 15, 15] : [17, 17, 17]} />
+        <Suspense fallback={<Loader/>}>
+          <IPhone scale={index === 1 ? [15, 15, 15] : [17, 17, 17]} item={item} />
         </Suspense>
       </group>
     </View>
