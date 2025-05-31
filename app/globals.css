@@ -188,7 +188,7 @@
   }
 
   .feature-text {
-    @apply text-gray-300 max-w-md text-lg md:text-xl font-semibold opacity-0 translate-y-[100px]
+    @apply text-gray-200 max-w-md text-lg md:text-xl font-semibold opacity-0 translate-y-[100px]
   }
 
   .feature-text-container {
@@ -220,7 +220,7 @@
   }
 
   .hiw-subtitle {
-    @apply text-gray-300 font-semibold text-xl md:text-2xl py-10 text-center
+    @apply text-gray-200 font-semibold text-xl md:text-2xl py-10 text-center
   }
 
   .hiw-video {
@@ -232,7 +232,7 @@
   }
 
   .hiw-text {
-    @apply text-gray-300 text-xl font-normal md:font-semibold
+    @apply text-gray-200 text-xl font-normal md:font-semibold
   }
 
   .hiw-bigtext {

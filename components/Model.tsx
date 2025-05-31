@@ -66,8 +66,8 @@ const Model = () => {
   })
 
   return (
-    <section className='px-4'>
-      <div className="screen-max-width mt-30">
+    <section className='px-4 py-10'>
+      <div className="screen-max-width mt-10">
         <h1 id="heading" className="section-heading text-gray-100 lg:text-6xl md:text-5xl text-3xl lg:mb-0 mb-5 font-medium">
           Take a closer look.
         </h1>
